@@ -32,6 +32,15 @@ export default function FontList({ fonts }: FontListProps) {
               canEdit: data.canEdit,
               source: data.source
             };
+
+            // If status is Unknown and source is static, add to pending
+            if (data.status === 'Unknown' && data.source === 'static') {
+              await fetch('/api/add-pending-font', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ fontName: font.name })
+              });
+            }
           }
         } catch (e) {
           console.error(`Failed to fetch status for ${font.name}`, e);

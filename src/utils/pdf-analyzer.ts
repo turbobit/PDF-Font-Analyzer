@@ -77,8 +77,29 @@ export async function analyzePdfFonts(file: File): Promise<AnalysisResult> {
                 }
 
                 if (fontName) {
-                    // Clean up font name (remove subset prefix like "ABCDEF+Arial")
-                    const cleanName = fontName.includes('+') ? fontName.split('+')[1] : fontName;
+                    // Step 1: Remove subset prefix like "ABCDEF+Arial"
+                    let cleanName = fontName.includes('+') ? fontName.split('+')[1] : fontName;
+                    const originalCleanName = cleanName;
+
+                    // Step 2: Smart suffix removal - only remove if it looks like a hex suffix pattern
+                    // Pattern: lowercase font name ending with 1-3 hex characters (common in Korean fonts)
+                    // Examples: nanumgtm51, nanumgtbc7, nanumgtbb1
+                    // But NOT: MalgunGothic, KoPubWorldDotumBold (these end with normal letters)
+
+                    // Check if the name ends with 1-3 hex digits AND the base name is lowercase
+                    const hexSuffixMatch = cleanName.match(/^([a-z]+)([0-9a-f]{1,3})$/i);
+
+                    if (hexSuffixMatch) {
+                        // Only remove suffix if the base part is all lowercase (like nanumgtm, nanumgtb)
+                        const basePart = hexSuffixMatch[1];
+                        const suffixPart = hexSuffixMatch[2];
+
+                        // Check if base is lowercase and suffix is hex-like
+                        if (basePart === basePart.toLowerCase() && /^[0-9a-f]+$/i.test(suffixPart)) {
+                            cleanName = basePart;
+                            log(`Removed hex suffix: ${originalCleanName} -> ${cleanName}`);
+                        }
+                    }
 
                     // Use clean name as key to prevent duplicates
                     if (!fonts.has(cleanName)) {

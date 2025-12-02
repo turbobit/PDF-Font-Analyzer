@@ -1,22 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getFontStatusFromDb, updateFontStatusInDb } from '@/lib/db';
-import { checkFontLicense as checkStaticLicense } from '@/utils/font-db';
+import { checkFontLicense } from '@/utils/font-db';
+import { isAuthorizedIP } from '@/lib/auth';
 
 // Helper to check if IP is authorized
 function isAuthorized(req: NextRequest): boolean {
     const ip = req.headers.get('x-forwarded-for') || req.ip || 'unknown';
-    // Check for localhost (::1, 127.0.0.1) or specific IP
-    if (ip.includes('121.162.54.16') || ip === '::1' || ip === '127.0.0.1' || ip.includes('localhost')) {
-        return true;
-    }
-
-    // Also check host header for localhost access
     const host = req.headers.get('host') || '';
+
     if (host.includes('localhost')) {
         return true;
     }
 
-    return false;
+    return isAuthorizedIP(ip);
 }
 
 export async function GET(req: NextRequest) {
@@ -35,7 +31,7 @@ export async function GET(req: NextRequest) {
     let source = 'db';
 
     if (!status) {
-        const staticInfo = checkStaticLicense(fontName);
+        const staticInfo = checkFontLicense(fontName);
         status = staticInfo.status;
         source = 'static';
     }

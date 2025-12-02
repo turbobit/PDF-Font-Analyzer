@@ -11,12 +11,14 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
   const [logs, setLogs] = useState<string[]>([]);
   const [showLogs, setShowLogs] = useState(false);
+  const [fileName, setFileName] = useState<string | null>(null);
 
   const handleFileSelect = async (file: File) => {
     setLoading(true);
     setError(null);
     setFonts([]);
     setLogs([]);
+    setFileName(file.name);
 
     try {
       const result = await analyzePdfFonts(file);
@@ -57,6 +59,13 @@ export default function Home() {
           </div>
         )}
 
+        {fileName && fonts.length > 0 && (
+          <div className="file-info">
+            <span className="file-icon">📄</span>
+            <span className="file-name">{fileName}</span>
+          </div>
+        )}
+
         <FontList fonts={fonts} />
 
         {logs.length > 0 && (
@@ -82,7 +91,6 @@ export default function Home() {
 
       <style jsx>{`
         .main-container {
-          min-height: 100vh;
           padding: 2rem;
           display: flex;
           justify-content: center;
@@ -134,6 +142,25 @@ export default function Home() {
           text-align: center;
           margin: 1rem 0;
           border: 1px solid #fed7d7;
+        }
+        .file-info {
+          background: white;
+          padding: 1rem 1.5rem;
+          border-radius: 8px;
+          margin: 1.5rem 0;
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+          border: 1px solid #eaeaea;
+        }
+        .file-icon {
+          font-size: 1.5rem;
+        }
+        .file-name {
+          font-weight: 500;
+          color: #333;
+          word-break: break-all;
         }
         .logs-section {
             margin-top: 3rem;
