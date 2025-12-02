@@ -2,6 +2,10 @@
 
 PDF 파일에서 사용된 폰트를 분석하고 라이선스 상태를 확인할 수 있는 웹 애플리케이션입니다.
 
+<img width="1273" height="1231" alt="image" src="https://github.com/user-attachments/assets/33ff3332-797a-4377-a17a-0c952b69f5ee" />
+<img width="1217" height="686" alt="image" src="https://github.com/user-attachments/assets/aa94e86b-60a1-42d7-9fb5-52f964406151" />
+<img width="1235" height="588" alt="image" src="https://github.com/user-attachments/assets/41854b75-f356-495d-931e-7f4223871b81" />
+
 ## 주요 기능
 
 - 📄 **PDF 폰트 분석**: PDF 파일을 업로드하여 사용된 모든 폰트를 자동으로 추출
